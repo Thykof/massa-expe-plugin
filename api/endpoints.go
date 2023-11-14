@@ -17,7 +17,7 @@ func set(gc gcache.Cache, val *memguard.LockedBuffer) {
 	}
 }
 
-func get(gc gcache.Cache) *memguard.LockedBuffer {
+func get(gc gcache.Cache) []byte {
 	value, err := gc.Get("key")
 	if err != nil {
 		fmt.Println("not found")
@@ -28,7 +28,7 @@ func get(gc gcache.Cache) *memguard.LockedBuffer {
 	vc := make([]byte, len(valueBytes))
 	copy(vc, valueBytes)
 
-	return memguard.NewBufferFromBytes(vc)
+	return vc
 }
 
 func NewExpe(gc gcache.Cache) operations.ExpeHandler {
@@ -51,6 +51,6 @@ func (e *ExpeEndpoint) Handle(params operations.ExpeParams) middleware.Responder
 	}
 
 	return operations.NewExpeOK().WithPayload(
-		&operations.ExpeOKBody{Message: fmt.Sprintf("val is %v", val.Bytes())},
+		&operations.ExpeOKBody{Message: fmt.Sprintf("val is %v", val)},
 	)
 }
