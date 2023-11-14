@@ -14,6 +14,8 @@ func set(gc gcache.Cache, val *memguard.LockedBuffer) {
 	vc := make([]byte, len(val.Bytes()))
 	copy(vc, val.Bytes())
 
+	val.Destroy()
+
 	err := gc.Set("key", vc)
 	if err != nil {
 		panic(err)
