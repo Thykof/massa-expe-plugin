@@ -5,13 +5,12 @@ import (
 
 	"expe-plugin/api/server/restapi/operations"
 
-	"github.com/awnumar/memguard"
 	"github.com/bluele/gcache"
 	"github.com/go-openapi/runtime/middleware"
 )
 
-func set(gc gcache.Cache, val *memguard.LockedBuffer) {
-	err := gc.Set("key", val.Bytes())
+func set(gc gcache.Cache, val []byte) {
+	err := gc.Set("key", val)
 	if err != nil {
 		panic(err)
 	}
@@ -40,11 +39,11 @@ type ExpeEndpoint struct {
 }
 
 func (e *ExpeEndpoint) Handle(params operations.ExpeParams) middleware.Responder {
-	value0 := []byte{1, 2, 3, 4, 5}
+	value := []byte{1, 2, 3, 4, 5}
 
 	val := get(e.gc)
 	if val == nil {
-		set(e.gc, memguard.NewBufferFromBytes(value0))
+		set(e.gc, value)
 		return operations.NewExpeOK().WithPayload(
 			&operations.ExpeOKBody{Message: "val added to cache"},
 		)
